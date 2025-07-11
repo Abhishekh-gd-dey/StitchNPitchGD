@@ -313,11 +313,16 @@ function App() {
   };
 
   const handleGuideSelected = (guide: Guide) => {
-    setSelectedGuide(guide);
+    // Extract chat IDs from the guide object if they exist
+    const { chatIds, ...guideData } = guide as Guide & { chatIds?: string[] };
+    setSelectedGuide(guideData);
+    setSelectedChatIds(chatIds || []);
     setIsPasswordModalOpen(true);
   };
 
-  const handlePasswordConfirm = async (action: 'pass' | 'fail', chatIds: string[]) => {
+  const [selectedChatIds, setSelectedChatIds] = useState<string[]>([]);
+
+  const handlePasswordConfirm = async (action: 'pass' | 'fail') => {
     setIsPasswordModalOpen(false);
     
     if (action === 'pass' && selectedGuide) {
@@ -328,7 +333,7 @@ function App() {
         department: selectedGuide.department,
         supervisor: selectedGuide.supervisor,
         timestamp: new Date().toISOString(),
-        chat_ids: chatIds
+        chat_ids: selectedChatIds
       };
       
       // Save to database
@@ -345,7 +350,7 @@ function App() {
         department: selectedGuide.department,
         supervisor: selectedGuide.supervisor,
         timestamp: new Date().toISOString(),
-        chat_ids: chatIds
+        chat_ids: selectedChatIds
       };
       
       // Save loser to database
@@ -360,6 +365,7 @@ function App() {
     
     // Reset selected guide
     setSelectedGuide(null);
+    setSelectedChatIds([]);
   };
 
   const handleCloseWinner = () => {
@@ -444,16 +450,18 @@ function App() {
         onClose={() => {
           setIsPasswordModalOpen(false);
           setSelectedGuide(null);
+          setSelectedChatIds([]);
         }}
-        onConfirm={(action, chatIds) => {
+        onConfirm={(action) => {
           const passwordInput = document.querySelector('input[type="password"]') as HTMLInputElement;
           if (passwordInput && validatePassword(passwordInput.value)) {
-            handlePasswordConfirm(action, chatIds);
+            handlePasswordConfirm(action);
           } else {
             alert('Invalid password. Access denied.');
           }
         }}
         guideName={selectedGuide?.name || ''}
+        chatIds={selectedChatIds}
       />
 
       {/* New Feature Modals */}

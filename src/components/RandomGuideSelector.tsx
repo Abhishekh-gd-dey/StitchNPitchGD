@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shuffle, User, Building, UserCheck, Trophy, Sparkles } from 'lucide-react';
+import { Shuffle, User, Building, UserCheck, Trophy, Sparkles, MessageCircle, Plus, Trash2 } from 'lucide-react';
 import { Guide, getGuidesByDepartment, Winner } from '../config/data';
 import DepartmentSelector from './DepartmentSelector';
 
@@ -16,10 +16,28 @@ const RandomGuideSelector: React.FC<RandomGuideSelectorProps> = ({
   const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [currentSpinGuide, setCurrentSpinGuide] = useState<Guide | null>(null);
+  const [chatIds, setChatIds] = useState<string[]>(['']);
 
   // Get winner guide IDs to exclude from selection
   const winnerGuideIds = new Set(winners.map(winner => winner.guide_id));
 
+  const addChatIdField = () => {
+    if (chatIds.length < 5) {
+      setChatIds([...chatIds, '']);
+    }
+  };
+
+  const removeChatIdField = (index: number) => {
+    if (chatIds.length > 1) {
+      setChatIds(chatIds.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateChatId = (index: number, value: string) => {
+    const newChatIds = [...chatIds];
+    newChatIds[index] = value;
+    setChatIds(newChatIds);
+  };
   const selectRandomGuide = () => {
     if (!selectedDepartment) return;
     
@@ -58,7 +76,9 @@ const RandomGuideSelector: React.FC<RandomGuideSelectorProps> = ({
 
   const handleMarkGuide = () => {
     if (selectedGuide) {
-      onGuideSelected(selectedGuide);
+      // Pass the guide with chat IDs
+      const validChatIds = chatIds.filter(id => id.trim() !== '');
+      onGuideSelected({ ...selectedGuide, chatIds: validChatIds });
     }
   };
 
@@ -66,6 +86,7 @@ const RandomGuideSelector: React.FC<RandomGuideSelectorProps> = ({
     setSelectedDepartment(department);
     setSelectedGuide(null); // Reset selected guide when department changes
     setCurrentSpinGuide(null); // Reset spinning guide
+    setChatIds(['']); // Reset chat IDs
   };
 
   const departmentGuides = selectedDepartment ? getGuidesByDepartment(selectedDepartment) : [];
@@ -202,6 +223,53 @@ const RandomGuideSelector: React.FC<RandomGuideSelectorProps> = ({
               </div>
             </div>
 
+            {/* Chat IDs Section */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-4">
+                <MessageCircle className="w-5 h-5 text-blue-300" />
+                <label className="text-lg font-medium text-white">
+                  Chat IDs (Optional - Max 5)
+                </label>
+              </div>
+              
+              <div className="space-y-3">
+                {chatIds.map((chatId, index) => (
+                  <div key={index} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={chatId}
+                      onChange={(e) => updateChatId(index, e.target.value)}
+                      className="flex-1 px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white placeholder-white placeholder-opacity-60 backdrop-blur-sm"
+                      placeholder={`Chat ID ${index + 1}`}
+                    />
+                    {chatIds.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeChatIdField(index)}
+                        className="p-3 bg-red-500 bg-opacity-20 text-red-300 rounded-xl hover:bg-red-500 hover:text-white transition-all"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                
+                {chatIds.length < 5 && (
+                  <button
+                    type="button"
+                    onClick={addChatIdField}
+                    className="flex items-center gap-2 px-4 py-3 bg-blue-500 bg-opacity-20 text-blue-300 rounded-xl hover:bg-blue-500 hover:text-white transition-all"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Add Chat ID
+                  </button>
+                )}
+              </div>
+              
+              <p className="text-sm text-blue-200 mt-2 opacity-75">
+                Chat IDs are optional and will be saved for record-keeping purposes
+              </p>
+            </div>
             <div className="text-center">
               <button
                 onClick={handleMarkGuide}

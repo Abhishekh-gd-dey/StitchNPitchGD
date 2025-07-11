@@ -10,7 +10,7 @@ interface ExportDataProps {
   losers: Loser[];
 }
 
-type ExportType = 'winners-csv' | 'winners-pdf' | 'guides-csv' | 'entry-logs-csv' | 'complete-data-csv';
+type ExportType = 'winners-csv' | 'winners-pdf' | 'losers-csv' | 'losers-pdf' | 'guides-csv' | 'complete-data-csv';
 
 const ExportData: React.FC<ExportDataProps> = ({ isOpen, onClose, winners, losers }) => {
   const [selectedExport, setSelectedExport] = useState<ExportType>('winners-csv');
@@ -25,38 +25,45 @@ const ExportData: React.FC<ExportDataProps> = ({ isOpen, onClose, winners, loser
   const exportOptions = [
     {
       id: 'winners-csv' as ExportType,
-      title: 'Winners List (CSV)',
-      description: 'Export all winners with details in CSV format',
+      title: 'Winners Data (CSV)',
+      description: 'Export all winners data in CSV format',
       icon: FileSpreadsheet,
       color: 'from-green-500 to-emerald-600'
     },
     {
       id: 'winners-pdf' as ExportType,
       title: 'Winners Report (PDF)',
-      description: 'Professional PDF report with winner statistics',
+      description: 'Professional PDF report with winners',
       icon: FileText,
       color: 'from-red-500 to-pink-600'
     },
     {
-      id: 'guides-csv' as ExportType,
-      title: 'All Guides (CSV)',
-      description: 'Complete guide database for backup',
-      icon: Users,
+      id: 'losers-csv' as ExportType,
+      title: 'Losers Data (CSV)',
+      description: 'Export all losers data in CSV format',
+      icon: FileSpreadsheet,
       color: 'from-blue-500 to-cyan-600'
     },
     {
-      id: 'entry-logs-csv' as ExportType,
-      title: 'Entry Logs (CSV)',
-      description: 'Detailed logs with timestamps and departments',
-      icon: Calendar,
+      id: 'losers-pdf' as ExportType,
+      title: 'Losers Data (PDF)',
+      description: 'Professional PDF report with losers',
+      icon: FileText,
       color: 'from-purple-500 to-indigo-600'
     },
     {
-      id: 'complete-data-csv' as ExportType,
-      title: 'Complete Data (CSV)',
-      description: 'All winners and losers with chat IDs',
-      icon: Trophy,
+      id: 'guides-csv' as ExportType,
+      title: 'Full Guide Dump',
+      description: 'Complete guide database for backup',
+      icon: Users,
       color: 'from-orange-500 to-yellow-600'
+    },
+    {
+      id: 'complete-data-csv' as ExportType,
+      title: 'Full Winners and Losers Data',
+      description: 'All winners and losers with complete data',
+      icon: Trophy,
+      color: 'from-indigo-500 to-purple-600'
     }
   ];
 
@@ -201,6 +208,92 @@ const ExportData: React.FC<ExportDataProps> = ({ isOpen, onClose, winners, loser
     pdf.save(`stitch-n-pitch-winners-report-${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
+  const generateLosersPDF = () => {
+    const pdf = new jsPDF();
+    const pageWidth = pdf.internal.pageSize.width;
+    const pageHeight = pdf.internal.pageSize.height;
+    
+    // Header
+    pdf.setFontSize(24);
+    pdf.setTextColor(30, 58, 138); // Blue color
+    pdf.text('Stitch n Pitch Contest', pageWidth / 2, 30, { align: 'center' });
+    
+    pdf.setFontSize(16);
+    pdf.setTextColor(75, 85, 99); // Gray color
+    pdf.text('Losers Report', pageWidth / 2, 45, { align: 'center' });
+    
+    // Date
+    pdf.setFontSize(10);
+    pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, pageWidth / 2, 55, { align: 'center' });
+    
+    // Summary Statistics
+    pdf.setFontSize(14);
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('Summary Statistics', 20, 75);
+    
+    const departments = [...new Set(losers.map(l => l.department))];
+    const stats = [
+      `Total Losers: ${losers.length}`,
+      `Departments Represented: ${departments.length}`,
+      `Contest Period: ${losers.length > 0 ? 
+        `${new Date(Math.min(...losers.map(l => new Date(l.timestamp).getTime()))).toLocaleDateString()} - ${new Date(Math.max(...losers.map(l => new Date(l.timestamp).getTime()))).toLocaleDateString()}` 
+        : 'No losers yet'}`
+    ];
+    
+    pdf.setFontSize(10);
+    stats.forEach((stat, index) => {
+      pdf.text(stat, 25, 90 + (index * 10));
+    });
+    
+    // Department Breakdown
+    pdf.setFontSize(14);
+    pdf.text('Department Breakdown', 20, 130);
+    
+    const departmentCounts = departments.map(dept => ({
+      department: dept,
+      count: losers.filter(l => l.department === dept).length
+    }));
+    
+    pdf.setFontSize(10);
+    departmentCounts.forEach((dept, index) => {
+      pdf.text(`${dept.department}: ${dept.count} losers`, 25, 145 + (index * 8));
+    });
+    
+    // Losers List
+    let yPosition = 145 + (departmentCounts.length * 8) + 20;
+    
+    if (yPosition > pageHeight - 50) {
+      pdf.addPage();
+      yPosition = 30;
+    }
+    
+    pdf.setFontSize(14);
+    pdf.text('Complete Losers List', 20, yPosition);
+    yPosition += 15;
+    
+    pdf.setFontSize(9);
+    losers.forEach((loser, index) => {
+      if (yPosition > pageHeight - 30) {
+        pdf.addPage();
+        yPosition = 30;
+      }
+      
+      const loserText = `${index + 1}. ${loser.name} (${loser.department}) - ${new Date(loser.timestamp).toLocaleDateString()}`;
+      pdf.text(loserText, 25, yPosition);
+      yPosition += 8;
+    });
+    
+    // Footer
+    const totalPages = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      pdf.setPage(i);
+      pdf.setFontSize(8);
+      pdf.setTextColor(128, 128, 128);
+      pdf.text(`Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+    }
+    
+    pdf.save(`stitch-n-pitch-losers-report-${new Date().toISOString().split('T')[0]}.pdf`);
+  };
   const performExport = async () => {
     setIsExporting(true);
     
@@ -225,6 +318,23 @@ const ExportData: React.FC<ExportDataProps> = ({ isOpen, onClose, winners, loser
           generatePDF();
           break;
           
+        case 'losers-csv':
+          const losersData = losers.map(loser => ({
+            'Loser #': losers.indexOf(loser) + 1,
+            'Name': loser.name,
+            'Department': loser.department,
+            'Supervisor': loser.supervisor,
+            'Selected Date': new Date(loser.timestamp).toLocaleDateString(),
+            'Selected Time': new Date(loser.timestamp).toLocaleTimeString(),
+            'Guide ID': loser.guide_id
+          }));
+          generateCSV(losersData, `stitch-n-pitch-losers-${new Date().toISOString().split('T')[0]}.csv`);
+          break;
+          
+        case 'losers-pdf':
+          generateLosersPDF();
+          break;
+          
         case 'guides-csv':
           const guidesData = GUIDES.map(guide => ({
             'Guide ID': guide.id,
@@ -234,21 +344,6 @@ const ExportData: React.FC<ExportDataProps> = ({ isOpen, onClose, winners, loser
             'Status': winners.some(w => w.guide_id === guide.id) ? 'Winner' : 'Available'
           }));
           generateCSV(guidesData, `stitch-n-pitch-guides-${new Date().toISOString().split('T')[0]}.csv`);
-          break;
-          
-        case 'entry-logs-csv':
-          const logsData = winners.map((winner, index) => ({
-            'Entry #': index + 1,
-            'Timestamp': winner.timestamp,
-            'Date': new Date(winner.timestamp).toLocaleDateString(),
-            'Time': new Date(winner.timestamp).toLocaleTimeString(),
-            'Guide ID': winner.guide_id,
-            'Guide Name': winner.name,
-            'Department': winner.department,
-            'Supervisor': winner.supervisor,
-            'Day of Week': new Date(winner.timestamp).toLocaleDateString('en-US', { weekday: 'long' })
-          }));
-          generateCSV(logsData, `stitch-n-pitch-entry-logs-${new Date().toISOString().split('T')[0]}.csv`);
           break;
           
         case 'complete-data-csv':
@@ -497,16 +592,22 @@ const ExportData: React.FC<ExportDataProps> = ({ isOpen, onClose, winners, loser
                   <p className="text-sm">Includes: Summary stats, department breakdown, formatted winner list</p>
                 </div>
               )}
+              {selectedExport === 'losers-csv' && (
+                <div>
+                  <p className="mb-2">📊 <strong>{losers.length}</strong> losers will be exported</p>
+                  <p className="text-sm">Includes: Name, Department, Supervisor, Selection Date & Time, Guide ID</p>
+                </div>
+              )}
+              {selectedExport === 'losers-pdf' && (
+                <div>
+                  <p className="mb-2">📄 Professional PDF report with statistics and complete loser list</p>
+                  <p className="text-sm">Includes: Summary stats, department breakdown, formatted loser list</p>
+                </div>
+              )}
               {selectedExport === 'guides-csv' && (
                 <div>
                   <p className="mb-2">👥 <strong>{GUIDES.length}</strong> guides will be exported</p>
                   <p className="text-sm">Includes: Guide ID, Name, Department, Supervisor, Winner Status</p>
-                </div>
-              )}
-              {selectedExport === 'entry-logs-csv' && (
-                <div>
-                  <p className="mb-2">📅 <strong>{winners.length}</strong> entry logs will be exported</p>
-                  <p className="text-sm">Includes: Detailed timestamps, guide info, day of week analysis</p>
                 </div>
               )}
               {selectedExport === 'complete-data-csv' && (

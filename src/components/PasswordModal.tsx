@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
-import { X, Lock, MessageCircle, Plus, Trash2 } from 'lucide-react';
+import { X, Lock } from 'lucide-react';
 
 interface PasswordModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (action: 'pass' | 'fail', chatIds: string[]) => void;
+  onConfirm: (action: 'pass' | 'fail') => void;
   guideName: string;
+  chatIds?: string[];
 }
 
 const PasswordModal: React.FC<PasswordModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
-  guideName
+  guideName,
+  chatIds = []
 }) => {
   const [password, setPassword] = useState('');
   const [selectedAction, setSelectedAction] = useState<'pass' | 'fail' | null>(null);
   const [error, setError] = useState('');
-  const [chatIds, setChatIds] = useState<string[]>(['']);
-  const [showChatIds, setShowChatIds] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,59 +27,27 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
       return;
     }
     
-    if (showChatIds) {
-      // Validate chat IDs if any are entered
-      const validChatIds = chatIds.filter(id => id.trim() !== '');
-      if (validChatIds.length > 5) {
-        setError('Maximum 5 Chat IDs allowed');
-        return;
-      }
-    }
-    
     if (!password.trim()) {
       setError('Please enter the password');
       return;
     }
     
-    const validChatIds = showChatIds ? chatIds.filter(id => id.trim() !== '') : [];
-    onConfirm(selectedAction, validChatIds);
+    onConfirm(selectedAction);
     setPassword('');
     setSelectedAction(null);
-    setChatIds(['']);
-    setShowChatIds(false);
     setError('');
   };
 
   const handleClose = () => {
     setPassword('');
     setSelectedAction(null);
-    setChatIds(['']);
-    setShowChatIds(false);
     setError('');
     onClose();
   };
 
-  const addChatIdField = () => {
-    if (chatIds.length < 5) {
-      setChatIds([...chatIds, '']);
-    }
-  };
-
-  const removeChatIdField = (index: number) => {
-    if (chatIds.length > 1) {
-      setChatIds(chatIds.filter((_, i) => i !== index));
-    }
-  };
-
-  const updateChatId = (index: number, value: string) => {
-    const newChatIds = [...chatIds];
-    newChatIds[index] = value;
-    setChatIds(newChatIds);
-  };
 
   const handleActionSelect = (action: 'pass' | 'fail') => {
     setSelectedAction(action);
-    setShowChatIds(true);
   };
   if (!isOpen) return null;
 
@@ -104,6 +72,11 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
         <div className="mb-6">
           <p className="text-white text-opacity-90 mb-4">
             Mark <span className="font-semibold text-blue-200">{guideName}</span> as:
+            {chatIds.length > 0 && (
+              <span className="block text-sm text-blue-300 mt-2">
+                Chat IDs: {chatIds.join(', ')}
+              </span>
+            )}
           </p>
           
           <div className="flex gap-4 mb-6">
@@ -132,55 +105,6 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
           </div>
         </div>
 
-        {/* Chat IDs Section */}
-        {showChatIds && (
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-4">
-              <MessageCircle className="w-5 h-5 text-blue-300" />
-              <label className="text-sm font-medium text-white text-opacity-90">
-                Chat IDs (Optional - Max 5)
-              </label>
-            </div>
-            
-            <div className="space-y-3">
-              {chatIds.map((chatId, index) => (
-                <div key={index} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={chatId}
-                    onChange={(e) => updateChatId(index, e.target.value)}
-                    className="flex-1 px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white placeholder-white placeholder-opacity-60 backdrop-blur-sm text-sm"
-                    placeholder={`Chat ID ${index + 1}`}
-                  />
-                  {chatIds.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeChatIdField(index)}
-                      className="p-2 bg-red-500 bg-opacity-20 text-red-300 rounded-lg hover:bg-red-500 hover:text-white transition-all"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              ))}
-              
-              {chatIds.length < 5 && (
-                <button
-                  type="button"
-                  onClick={addChatIdField}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 bg-opacity-20 text-blue-300 rounded-lg hover:bg-blue-500 hover:text-white transition-all text-sm"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Chat ID
-                </button>
-              )}
-            </div>
-            
-            <p className="text-xs text-blue-200 mt-2 opacity-75">
-              Chat IDs are optional and will be saved for record-keeping purposes
-            </p>
-          </div>
-        )}
         <form onSubmit={handleSubmit}>
           <div className="mb-6">
             <label htmlFor="password" className="block text-sm font-medium text-white text-opacity-90 mb-2">
