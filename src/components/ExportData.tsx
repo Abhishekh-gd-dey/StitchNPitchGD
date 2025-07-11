@@ -13,6 +13,7 @@ interface ExportDataProps {
 type ExportType = 'winners-csv' | 'winners-pdf' | 'guides-csv' | 'entry-logs-csv' | 'complete-data-csv';
 
 const ExportData: React.FC<ExportDataProps> = ({ isOpen, onClose, winners }) => {
+const ExportData: React.FC<ExportDataProps> = ({ isOpen, onClose, winners, losers }) => {
   const [selectedExport, setSelectedExport] = useState<ExportType>('winners-csv');
   const [isExporting, setIsExporting] = useState(false);
   const [exportSuccess, setExportSuccess] = useState(false);
