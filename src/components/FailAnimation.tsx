@@ -78,60 +78,60 @@ const FailAnimation: React.FC<FailAnimationProps> = ({ isActive, guideName, onCl
       </style>
       
       <div 
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black bg-opacity-70 backdrop-blur-sm overflow-y-auto"
         onClick={handleClose}
       >
         <div 
-          className="bg-white bg-opacity-10 backdrop-blur-xl border border-white border-opacity-20 rounded-3xl p-8 max-w-2xl w-full shadow-2xl text-center fail-bounce relative"
+          className="bg-white bg-opacity-10 backdrop-blur-xl border border-white border-opacity-20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-xs sm:max-w-md md:max-w-2xl w-full max-h-[95vh] overflow-y-auto shadow-2xl text-center fail-bounce relative my-auto"
           onClick={handleModalClick}
         >
           
           {/* Close Button */}
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 text-white hover:text-gray-200 transition-colors bg-white bg-opacity-20 rounded-full p-2 hover:bg-opacity-30 z-10 backdrop-blur-sm"
+            className="absolute top-2 right-2 sm:top-4 sm:right-4 text-white hover:text-gray-200 transition-colors bg-white bg-opacity-20 rounded-full p-1.5 sm:p-2 hover:bg-opacity-30 z-10 backdrop-blur-sm"
             type="button"
           >
-            <X className="w-6 h-6" />
+            <X className="w-4 h-4 sm:w-6 sm:h-6" />
           </button>
 
           {/* Animated Emojis */}
-          <div className="flex justify-center gap-4 mb-6">
-            <span className="text-6xl fail-emoji">😅</span>
-            <span className="text-6xl fail-float">🎭</span>
-            <span className="text-6xl fail-shake">😂</span>
+          <div className="flex justify-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+            <span className="text-3xl sm:text-4xl md:text-6xl fail-emoji">😅</span>
+            <span className="text-3xl sm:text-4xl md:text-6xl fail-float">🎭</span>
+            <span className="text-3xl sm:text-4xl md:text-6xl fail-shake">😂</span>
           </div>
           
           {/* Main Message */}
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 fail-shake">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-2 sm:mb-4 fail-shake">
             OOPS! 
           </h1>
           
-          <div className="bg-white bg-opacity-20 rounded-2xl p-6 mb-6 backdrop-blur-sm border border-white border-opacity-30">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+          <div className="bg-white bg-opacity-20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 mb-4 sm:mb-6 backdrop-blur-sm border border-white border-opacity-30">
+            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2 break-words">
               {guideName}
             </h2>
-            <p className="text-xl text-white opacity-90">
+            <p className="text-sm sm:text-base md:text-xl text-white opacity-90 break-words">
               {randomMessage}
             </p>
           </div>
           
           {/* Funny Animation Elements */}
-          <div className="flex justify-center gap-8 mb-6">
-            <div className="text-4xl fail-float" style={{ animationDelay: '0.2s' }}>🎪</div>
-            <div className="text-4xl fail-float" style={{ animationDelay: '0.4s' }}>🎨</div>
-            <div className="text-4xl fail-float" style={{ animationDelay: '0.6s' }}>🎵</div>
-            <div className="text-4xl fail-float" style={{ animationDelay: '0.8s' }}>🎲</div>
+          <div className="flex justify-center gap-2 sm:gap-4 md:gap-8 mb-4 sm:mb-6">
+            <div className="text-2xl sm:text-3xl md:text-4xl fail-float" style={{ animationDelay: '0.2s' }}>🎪</div>
+            <div className="text-2xl sm:text-3xl md:text-4xl fail-float" style={{ animationDelay: '0.4s' }}>🎨</div>
+            <div className="text-2xl sm:text-3xl md:text-4xl fail-float" style={{ animationDelay: '0.6s' }}>🎵</div>
+            <div className="text-2xl sm:text-3xl md:text-4xl fail-float" style={{ animationDelay: '0.8s' }}>🎲</div>
           </div>
           
-          <div className="text-white text-lg opacity-80 mb-6">
+          <div className="text-white text-sm sm:text-base md:text-lg opacity-80 mb-4 sm:mb-6 px-2">
             Don't worry, every great story has plot twists! 📚✨
           </div>
 
           {/* Close Button */}
           <button
             onClick={handleClose}
-            className="bg-white bg-opacity-20 text-white px-8 py-3 rounded-xl hover:bg-opacity-30 transition-all transform hover:scale-105 font-semibold backdrop-blur-sm z-10 relative border border-white border-opacity-30"
+            className="bg-white bg-opacity-20 text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 rounded-lg sm:rounded-xl hover:bg-opacity-30 transition-all transform hover:scale-105 font-semibold text-sm sm:text-base backdrop-blur-sm z-10 relative border border-white border-opacity-30"
             type="button"
           >
             Try Again
