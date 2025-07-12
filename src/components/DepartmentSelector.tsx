@@ -23,7 +23,7 @@ const DepartmentSelector: React.FC<DepartmentSelectorProps> = ({
           <Building2 className="w-8 h-8" />
           Select Department
         </h2>
-        <p className="text-blue-200">Choose a department to select guides from</p>
+        <p className="text-purple-200">Choose a department to select guides from</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
@@ -45,9 +45,9 @@ const DepartmentSelector: React.FC<DepartmentSelectorProps> = ({
             >
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-3">
-                  <Building2 className={`w-6 h-6 ${isSelected ? 'text-white' : 'text-blue-300'}`} />
+                  <Building2 className={`w-6 h-6 ${isSelected ? 'text-white' : 'text-purple-300'}`} />
                   <ChevronRight className={`w-5 h-5 transition-transform ${
-                    isSelected ? 'text-white rotate-90' : 'text-blue-300 group-hover:translate-x-1'
+                    isSelected ? 'text-white rotate-90' : 'text-purple-300 group-hover:translate-x-1'
                   }`} />
                 </div>
                 
@@ -59,7 +59,7 @@ const DepartmentSelector: React.FC<DepartmentSelectorProps> = ({
                 
                 <div className="space-y-2">
                   <div className={`flex items-center gap-2 text-sm ${
-                    isSelected ? 'text-white text-opacity-90' : 'text-blue-200'
+                    isSelected ? 'text-white text-opacity-90' : 'text-purple-200'
                   }`}>
                     <Users className="w-4 h-4" />
                     <span>{availableGuides.length} Available</span>
@@ -77,7 +77,7 @@ const DepartmentSelector: React.FC<DepartmentSelectorProps> = ({
               </div>
 
               {/* Animated background effect */}
-              <div className={`absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300 ${
+              <div className={`absolute inset-0 bg-gradient-to-br from-purple-400 to-pink-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300 ${
                 isSelected ? 'opacity-30' : ''
               }`} />
             </button>

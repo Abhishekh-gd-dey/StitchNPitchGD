@@ -6,14 +6,14 @@ const DynamicOrbs: React.FC = () => {
     id: i,
     size: Math.random() * 100 + 50, // 50-150px
     color: [
-      'from-blue-400 to-purple-600',
-      'from-pink-400 to-red-600',
-      'from-green-400 to-blue-600',
-      'from-yellow-400 to-orange-600',
-      'from-purple-400 to-pink-600',
-      'from-cyan-400 to-blue-600',
-      'from-orange-400 to-red-600',
-      'from-indigo-400 to-purple-600'
+      'from-purple-400 to-indigo-600',
+      'from-pink-400 to-purple-600',
+      'from-indigo-400 to-purple-600',
+      'from-violet-400 to-purple-600',
+      'from-fuchsia-400 to-pink-600',
+      'from-purple-500 to-indigo-600',
+      'from-pink-500 to-purple-600',
+      'from-indigo-500 to-purple-600'
     ][i % 8],
     duration: Math.random() * 20 + 15, // 15-35s
     delay: Math.random() * 10, // 0-10s delay

@@ -1,17 +1,10 @@
 import React, { useState } from 'react';
 import { Trophy, Calendar, User, Building, UserCheck, Trash2, AlertTriangle, X, Filter, Users, Star, MessageCircle, Eye, EyeOff } from 'lucide-react';
-import { Winner, PURGE_PASSWORD, ADMIN_PASSWORD, DEPARTMENTS } from '../config/data';
+import { Winner, ADMIN_PASSWORD, DEPARTMENTS } from '../config/data';
 
 interface WinnerHistoryProps {
   winners: Winner[];
-  onPurgeWinners: () => void;
   onDeleteWinner?: (winnerId: string) => void;
-}
-
-interface PurgeModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
 }
 
 interface DeleteModalProps {
@@ -20,85 +13,6 @@ interface DeleteModalProps {
   onConfirm: () => void;
   winnerName: string;
 }
-
-const PurgeModal: React.FC<PurgeModalProps> = ({ isOpen, onClose, onConfirm }) => {
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === PURGE_PASSWORD) {
-      onConfirm();
-      setPassword('');
-      setError('');
-    } else {
-      setError('Invalid password. Access denied.');
-    }
-  };
-
-  const handleClose = () => {
-    setPassword('');
-    setError('');
-    onClose();
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white bg-opacity-10 backdrop-blur-xl border border-white border-opacity-20 rounded-3xl p-8 max-w-md w-full shadow-2xl">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-red-500 bg-opacity-20 rounded-xl backdrop-blur-sm">
-            <AlertTriangle className="w-8 h-8 text-red-300" />
-          </div>
-          <h2 className="text-2xl font-bold text-white">Confirm Purge</h2>
-        </div>
-
-        <div className="mb-6">
-          <p className="text-white text-opacity-90 mb-4">
-            This action will permanently delete all winners from the database. This cannot be undone.
-          </p>
-          
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="purge-password" className="block text-sm font-medium text-white text-opacity-90 mb-2">
-              Admin Password
-            </label>
-            <input
-              type="password"
-              id="purge-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl focus:ring-2 focus:ring-red-400 focus:border-transparent text-white placeholder-white placeholder-opacity-60 backdrop-blur-sm"
-              placeholder="Enter admin password"
-            />
-            
-            {error && (
-              <div className="mt-3 p-3 bg-red-500 bg-opacity-20 border border-red-400 border-opacity-50 text-red-200 rounded-lg backdrop-blur-sm">
-                {error}
-              </div>
-            )}
-
-            <div className="flex gap-3 mt-6">
-              <button
-                type="button"
-                onClick={handleClose}
-                className="flex-1 py-3 px-4 bg-white bg-opacity-10 border border-white border-opacity-20 text-white rounded-xl hover:bg-opacity-20 transition-colors backdrop-blur-sm"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="flex-1 py-3 px-4 bg-red-600 bg-opacity-80 text-white rounded-xl hover:bg-opacity-90 transition-colors backdrop-blur-sm border border-red-500 border-opacity-50"
-              >
-                Purge All Winners
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, onConfirm, winnerName }) => {
   const [password, setPassword] = useState('');
@@ -143,7 +57,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, onConfirm, w
 
         <div className="mb-6">
           <p className="text-white text-opacity-90 mb-4">
-            Are you sure you want to delete <span className="font-semibold text-blue-200">{winnerName}</span> from the winners list? This action cannot be undone.
+            Are you sure you want to delete <span className="font-semibold text-purple-200">{winnerName}</span> from the winners list? This action cannot be undone.
           </p>
           
           <form onSubmit={handleSubmit}>
@@ -187,8 +101,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, onConfirm, w
   );
 };
 
-const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, onDeleteWinner }) => {
-  const [isPurgeModalOpen, setIsPurgeModalOpen] = useState(false);
+const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onDeleteWinner }) => {
   const [selectedDepartment, setSelectedDepartment] = useState<string>('All');
   const [expandedWinner, setExpandedWinner] = useState<string | null>(null);
   const [deleteModalState, setDeleteModalState] = useState<{
@@ -200,11 +113,6 @@ const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, 
     winnerId: null,
     winnerName: ''
   });
-
-  const handlePurgeConfirm = () => {
-    onPurgeWinners();
-    setIsPurgeModalOpen(false);
-  };
 
   const handleDeleteClick = (winner: Winner) => {
     setDeleteModalState({
@@ -251,16 +159,16 @@ const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, 
   // Department button colors
   const getDepartmentColor = (department: string, index: number) => {
     const colors = [
-      'from-blue-400 to-blue-600',
-      'from-green-400 to-green-600',
       'from-purple-400 to-purple-600',
       'from-pink-400 to-pink-600',
-      'from-orange-400 to-orange-600',
-      'from-cyan-400 to-cyan-600',
-      'from-red-400 to-red-600',
       'from-indigo-400 to-indigo-600',
-      'from-yellow-400 to-yellow-600',
-      'from-teal-400 to-teal-600'
+      'from-violet-400 to-violet-600',
+      'from-fuchsia-400 to-fuchsia-600',
+      'from-purple-500 to-indigo-600',
+      'from-pink-500 to-purple-600',
+      'from-indigo-500 to-purple-600',
+      'from-violet-500 to-purple-600',
+      'from-fuchsia-500 to-pink-600'
     ];
     return colors[index % colors.length];
   };
@@ -276,7 +184,7 @@ const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, 
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
             🏆 Winner History
           </h1>
-          <p className="text-xl text-blue-200">
+          <p className="text-xl text-purple-200">
             {winners.length} {winners.length === 1 ? 'Winner' : 'Winners'} Selected So Far
           </p>
         </div>
@@ -288,7 +196,7 @@ const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, 
               <Filter className="w-6 h-6" />
               Filter by Department
             </h2>
-            <p className="text-blue-200">Click on a department to filter winners</p>
+            <p className="text-purple-200">Click on a department to filter winners</p>
           </div>
 
           <div className="flex flex-wrap justify-center gap-3 mb-4">
@@ -338,7 +246,7 @@ const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, 
                   }`}
                 >
                   <div className="relative z-10 flex items-center gap-2">
-                    <Building className={`w-5 h-5 ${isSelected ? 'text-white' : 'text-blue-300'}`} />
+                    <Building className={`w-5 h-5 ${isSelected ? 'text-white' : 'text-purple-300'}`} />
                     <span className={`font-semibold ${isSelected ? 'text-white' : 'text-white'}`}>
                       {department}
                     </span>
@@ -346,7 +254,7 @@ const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, 
                       <span className={`px-2 py-1 rounded-full text-xs font-bold ${
                         isSelected 
                           ? 'bg-white bg-opacity-20 text-white' 
-                          : 'bg-blue-500 bg-opacity-30 text-blue-200'
+                          : 'bg-purple-500 bg-opacity-30 text-purple-200'
                       }`}>
                         {count}
                       </span>
@@ -374,19 +282,6 @@ const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, 
           </div>
         </div>
 
-        {/* Purge Button */}
-        {winners.length > 0 && (
-          <div className="text-center mb-8">
-            <button
-              onClick={() => setIsPurgeModalOpen(true)}
-              className="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-xl hover:bg-red-700 transition-all transform hover:scale-105 font-semibold shadow-lg"
-            >
-              <Trash2 className="w-5 h-5" />
-              Purge All Winners
-            </button>
-          </div>
-        )}
-
         {/* Winners List */}
         {filteredWinners.length === 0 ? (
           <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-12 text-center border border-white border-opacity-20">
@@ -394,7 +289,7 @@ const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, 
             <h2 className="text-2xl font-semibold text-white mb-2">
               {selectedDepartment === 'All' ? 'No Winners Yet' : `No Winners from ${selectedDepartment}`}
             </h2>
-            <p className="text-blue-200">
+            <p className="text-purple-200">
               {selectedDepartment === 'All' 
                 ? 'Start selecting guides to see winners here!' 
                 : `No guides from ${selectedDepartment} have been selected as winners yet.`
@@ -420,7 +315,7 @@ const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, 
                     </div>
                     <div>
                       <h3 className="text-2xl font-bold text-white">{winner.name}</h3>
-                      <div className="flex items-center gap-2 text-blue-200">
+                      <div className="flex items-center gap-2 text-purple-200">
                         <Calendar className="w-4 h-4" />
                         <span>{new Date(winner.timestamp).toLocaleString()}</span>
                       </div>
@@ -431,7 +326,7 @@ const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, 
                     {winner.chat_ids && winner.chat_ids.length > 0 && (
                       <button
                         onClick={() => toggleWinnerExpansion(winner.id || '')}
-                        className="p-2 bg-blue-500 bg-opacity-20 text-blue-300 rounded-lg hover:bg-blue-500 hover:text-white transition-all"
+                        className="p-2 bg-purple-500 bg-opacity-20 text-purple-300 rounded-lg hover:bg-purple-500 hover:text-white transition-all"
                         title="View Chat IDs"
                       >
                         {expandedWinner === winner.id ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -451,9 +346,9 @@ const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, 
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="flex items-center gap-3 bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm">
-                    <Building className="w-5 h-5 text-blue-300" />
+                    <Building className="w-5 h-5 text-purple-300" />
                     <div>
-                      <div className="font-medium text-blue-200">Department</div>
+                      <div className="font-medium text-purple-200">Department</div>
                       <div className="text-lg text-white">{winner.department}</div>
                     </div>
                   </div>
@@ -461,7 +356,7 @@ const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, 
                   <div className="flex items-center gap-3 bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm">
                     <UserCheck className="w-5 h-5 text-green-300" />
                     <div>
-                      <div className="font-medium text-blue-200">Supervisor</div>
+                      <div className="font-medium text-purple-200">Supervisor</div>
                       <div className="text-lg text-white">{winner.supervisor}</div>
                     </div>
                   </div>
@@ -471,13 +366,13 @@ const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, 
                 {expandedWinner === winner.id && winner.chat_ids && winner.chat_ids.length > 0 && (
                   <div className="mt-4 bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm">
                     <div className="flex items-center gap-2 mb-3">
-                      <MessageCircle className="w-5 h-5 text-blue-300" />
-                      <h4 className="font-medium text-blue-200">Chat IDs</h4>
+                      <MessageCircle className="w-5 h-5 text-purple-300" />
+                      <h4 className="font-medium text-purple-200">Chat IDs</h4>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {winner.chat_ids.map((chatId, chatIndex) => (
                         <div key={chatIndex} className="bg-white bg-opacity-10 rounded-lg p-3">
-                          <div className="text-xs text-blue-200 mb-1">Chat ID {chatIndex + 1}</div>
+                          <div className="text-xs text-purple-200 mb-1">Chat ID {chatIndex + 1}</div>
                           <div className="text-white font-mono text-sm">{chatId}</div>
                         </div>
                       ))}
@@ -488,12 +383,6 @@ const WinnerHistory: React.FC<WinnerHistoryProps> = ({ winners, onPurgeWinners, 
             ))}
           </div>
         )}
-
-        <PurgeModal
-          isOpen={isPurgeModalOpen}
-          onClose={() => setIsPurgeModalOpen(false)}
-          onConfirm={handlePurgeConfirm}
-        />
 
         <DeleteModal
           isOpen={deleteModalState.isOpen}

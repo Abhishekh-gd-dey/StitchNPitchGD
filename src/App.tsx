@@ -200,90 +200,19 @@ function App() {
     }
   };
 
-  const purgeAllWinners = async () => {
-    try {
-      // Use a more specific delete query
-      const { error } = await supabase
-        .from('winners')
-        .delete()
-        .gte('created_at', '1900-01-01'); // Delete all records by using a date condition that matches all
-
-      if (error) {
-        console.error('Error purging winners from database:', error);
-        // Try alternative delete method
-        const { error: altError } = await supabase
-          .from('winners')
-          .delete()
-          .not('id', 'is', null); // Delete all records where id is not null (which should be all records)
-        
-        if (altError) {
-          console.error('Alternative purge method also failed:', altError);
-          // Fallback to localStorage only
-          setWinners([]);
-          localStorage.removeItem('stitchAndPitchWinners');
-          return;
-        }
-      }
-
-      // Successfully purged from database
-      setWinners([]);
-      setLosers([]);
-      localStorage.removeItem('stitchAndPitchWinners');
-      localStorage.removeItem('stitchAndPitchLosers');
-      
-      // Reload to confirm the purge worked
-      await loadWinners();
-      await loadLosers();
-      
-    } catch (error) {
-      console.error('Error connecting to database during purge:', error);
-      // Fallback to localStorage
-      setWinners([]);
-      setLosers([]);
-      localStorage.removeItem('stitchAndPitchWinners');
-      localStorage.removeItem('stitchAndPitchLosers');
-    }
-  };
-
-  const purgeAllLosers = async () => {
-    try {
-      const { error } = await supabase
-        .from('losers')
-        .delete()
-        .gte('created_at', '1900-01-01');
-
-      if (error) {
-        console.error('Error purging losers from database:', error);
-        const { error: altError } = await supabase
-          .from('losers')
-          .delete()
-          .not('id', 'is', null);
-        
-        if (altError) {
-          console.error('Alternative purge method also failed:', altError);
-          setLosers([]);
-          localStorage.removeItem('stitchAndPitchLosers');
-          return;
-        }
-      }
-
-      setLosers([]);
-      localStorage.removeItem('stitchAndPitchLosers');
-      await loadLosers();
-      
-    } catch (error) {
-      console.error('Error connecting to database during purge:', error);
-      setLosers([]);
-      localStorage.removeItem('stitchAndPitchLosers');
-    }
-  };
-
   const handleRestoreWinners = async (restoredWinners: Winner[], restoredLosers?: Loser[]) => {
     try {
       // First, purge existing data
-      await purgeAllWinners();
+      const { error: winnersError } = await supabase
+        .from('winners')
+        .delete()
+        .gte('created_at', '1900-01-01');
+
       if (restoredLosers) {
-        await purgeAllLosers();
+        const { error: losersError } = await supabase
+          .from('losers')
+          .delete()
+          .gte('created_at', '1900-01-01');
       }
       
       // Then insert restored data
@@ -384,7 +313,7 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center">
         <div className="text-center">
           <div className="flex justify-center mb-6">
             <img 
@@ -401,7 +330,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 relative overflow-hidden">
       {/* Dynamic Orbs Background */}
       <DynamicOrbs />
 
@@ -409,7 +338,6 @@ function App() {
       <Navigation
         currentTab={currentTab}
         onTabChange={setCurrentTab}
-        onPurgeWinners={purgeAllWinners}
         winnerCount={winners.length}
         onOpenWinHistoryDashboard={() => setIsWinHistoryDashboardOpen(true)}
         onOpenExportData={() => setIsExportDataOpen(true)}
@@ -428,7 +356,6 @@ function App() {
         {currentTab === 'winners' && (
           <WinnerHistory 
             winners={winners} 
-            onPurgeWinners={purgeAllWinners}
             onDeleteWinner={deleteWinnerFromDatabase}
           />
         )}
@@ -436,12 +363,10 @@ function App() {
 
       {/* Winner Display Overlay */}
       {currentWinner && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-          <WinnerDisplay
-            winner={currentWinner}
-            onBack={handleCloseWinner}
-          />
-        </div>
+        <WinnerDisplay
+          winner={currentWinner}
+          onBack={handleCloseWinner}
+        />
       )}
 
       {/* Password Modal */}

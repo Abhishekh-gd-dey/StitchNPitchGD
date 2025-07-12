@@ -111,7 +111,7 @@ const RandomGuideSelector: React.FC<RandomGuideSelectorProps> = ({
             Stitch n Pitch
             <Sparkles className="w-16 h-16 text-yellow-400 animate-pulse" />
           </h1>
-          <p className="text-xl md:text-2xl text-blue-200 font-medium">
+          <p className="text-xl md:text-2xl text-purple-200 font-medium">
             Choose your department and pick a random guide for audit
           </p>
         </div>
@@ -172,14 +172,14 @@ const RandomGuideSelector: React.FC<RandomGuideSelectorProps> = ({
                       <div className="text-3xl font-bold text-white mb-2 animate-pulse">
                         {currentSpinGuide.name}
                       </div>
-                      <div className="text-blue-200 text-lg">
+                      <div className="text-purple-200 text-lg">
                         {currentSpinGuide.department} • {currentSpinGuide.supervisor}
                       </div>
                     </div>
                   </div>
                 )}
                 
-                <div className="text-blue-200 animate-bounce">
+                <div className="text-purple-200 animate-bounce">
                   Names are scrolling through the pool... Building suspense! ⏰
                 </div>
               </div>
@@ -191,7 +191,7 @@ const RandomGuideSelector: React.FC<RandomGuideSelectorProps> = ({
         {selectedGuide && !isSpinning && (
           <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-3xl p-8 shadow-2xl mb-8 transform transition-all hover:scale-105 border border-white border-opacity-20">
             <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-500 bg-opacity-30 rounded-full mb-4 backdrop-blur-sm">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-500 bg-opacity-30 rounded-full mb-4 backdrop-blur-sm">
                 <User className="w-8 h-8 text-white" />
               </div>
               <h2 className="text-3xl font-bold text-white mb-2">
@@ -199,16 +199,16 @@ const RandomGuideSelector: React.FC<RandomGuideSelectorProps> = ({
               </h2>
             </div>
 
-            <div className="bg-gradient-to-r from-blue-500 from-opacity-20 to-purple-500 to-opacity-20 rounded-2xl p-6 mb-6 backdrop-blur-sm border border-white border-opacity-10">
+            <div className="bg-gradient-to-r from-purple-500 from-opacity-20 to-pink-500 to-opacity-20 rounded-2xl p-6 mb-6 backdrop-blur-sm border border-white border-opacity-10">
               <h3 className="text-4xl font-bold text-white mb-4 text-center">
                 {selectedGuide.name}
               </h3>
               
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-3 bg-white bg-opacity-10 rounded-xl p-4 shadow-sm backdrop-blur-sm">
-                  <Building className="w-6 h-6 text-blue-300" />
+                  <Building className="w-6 h-6 text-purple-300" />
                   <div>
-                    <div className="font-semibold text-blue-200">Department</div>
+                    <div className="font-semibold text-purple-200">Department</div>
                     <div className="text-xl text-white">{selectedGuide.department}</div>
                   </div>
                 </div>
@@ -216,7 +216,7 @@ const RandomGuideSelector: React.FC<RandomGuideSelectorProps> = ({
                 <div className="flex items-center gap-3 bg-white bg-opacity-10 rounded-xl p-4 shadow-sm backdrop-blur-sm">
                   <UserCheck className="w-6 h-6 text-green-300" />
                   <div>
-                    <div className="font-semibold text-blue-200">Supervisor</div>
+                    <div className="font-semibold text-purple-200">Supervisor</div>
                     <div className="text-xl text-white">{selectedGuide.supervisor}</div>
                   </div>
                 </div>
@@ -226,7 +226,7 @@ const RandomGuideSelector: React.FC<RandomGuideSelectorProps> = ({
             {/* Chat IDs Section */}
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-4">
-                <MessageCircle className="w-5 h-5 text-blue-300" />
+                <MessageCircle className="w-5 h-5 text-purple-300" />
                 <label className="text-lg font-medium text-white">
                   Chat IDs (Optional - Max 5)
                 </label>
@@ -239,7 +239,7 @@ const RandomGuideSelector: React.FC<RandomGuideSelectorProps> = ({
                       type="text"
                       value={chatId}
                       onChange={(e) => updateChatId(index, e.target.value)}
-                      className="flex-1 px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-transparent text-white placeholder-white placeholder-opacity-60 backdrop-blur-sm"
+                      className="flex-1 px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-transparent text-white placeholder-white placeholder-opacity-60 backdrop-blur-sm"
                       placeholder={`Chat ID ${index + 1}`}
                     />
                     {chatIds.length > 1 && (
@@ -258,7 +258,7 @@ const RandomGuideSelector: React.FC<RandomGuideSelectorProps> = ({
                   <button
                     type="button"
                     onClick={addChatIdField}
-                    className="flex items-center gap-2 px-4 py-3 bg-blue-500 bg-opacity-20 text-blue-300 rounded-xl hover:bg-blue-500 hover:text-white transition-all"
+                    className="flex items-center gap-2 px-4 py-3 bg-purple-500 bg-opacity-20 text-purple-300 rounded-xl hover:bg-purple-500 hover:text-white transition-all"
                   >
                     <Plus className="w-5 h-5" />
                     Add Chat ID
@@ -266,7 +266,7 @@ const RandomGuideSelector: React.FC<RandomGuideSelectorProps> = ({
                 )}
               </div>
               
-              <p className="text-sm text-blue-200 mt-2 opacity-75">
+              <p className="text-sm text-purple-200 mt-2 opacity-75">
                 Chat IDs are optional and will be saved for record-keeping purposes
               </p>
             </div>
@@ -285,9 +285,9 @@ const RandomGuideSelector: React.FC<RandomGuideSelectorProps> = ({
         {/* Instructions */}
         <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-6 text-center border border-white border-opacity-20">
           <h3 className="text-xl font-semibold text-white mb-3">How to Use</h3>
-          <div className="grid md:grid-cols-4 gap-4 text-blue-100">
+          <div className="grid md:grid-cols-4 gap-4 text-purple-100">
             <div className="flex flex-col items-center">
-              <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mb-2">
+              <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mb-2">
                 <span className="text-white font-bold">1</span>
               </div>
               <p>Select a department</p>

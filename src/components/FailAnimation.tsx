@@ -82,7 +82,7 @@ const FailAnimation: React.FC<FailAnimationProps> = ({ isActive, guideName, onCl
         onClick={handleClose}
       >
         <div 
-          className="bg-gradient-to-br from-red-500 via-pink-500 to-purple-600 bg-opacity-90 backdrop-blur-xl border border-white border-opacity-20 rounded-3xl p-8 max-w-2xl w-full shadow-2xl text-center fail-bounce relative"
+          className="bg-white bg-opacity-10 backdrop-blur-xl border border-white border-opacity-20 rounded-3xl p-8 max-w-2xl w-full shadow-2xl text-center fail-bounce relative"
           onClick={handleModalClick}
         >
           
@@ -136,9 +136,6 @@ const FailAnimation: React.FC<FailAnimationProps> = ({ isActive, guideName, onCl
           >
             Try Again
           </button>
-          
-          {/* Animated Border */}
-          <div className="absolute inset-0 rounded-3xl border-4 border-white opacity-30 animate-pulse pointer-events-none"></div>
         </div>
       </div>
     </>
